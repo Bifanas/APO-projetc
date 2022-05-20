@@ -429,14 +429,14 @@ static int checkBoard(Board board, MetaBoard meta, int player, int row, int colu
     const int yStart[COLS - 1] = {0,  1,  2,  0,  0,  0,  0,  2};
     const int xDelta[ROWS - 1] = {1,  1,  1,  0,  0,  0,  1,  1};
     const int yDelta[COLS - 1] = {0,  0,  0,  1,  1,  1,  1,  1};
-    static int startx, starty, deltax, deltay, status = 0;
+    int startx, starty, deltax, deltay, status = 0;
 	//printf("%d %d", row, column);
     //for (; (row % 3) != 0; row--) // quickly set row to left bound of sub-board
     //for (; (column % 3) != 0; column--)// quickly set column to upper bound of sub-board
     row = row/3*3;
     column = column/3*3;
     //printf("%d %d", row, column);
-
+	printf("%d", status);
     for (int trip = 0; trip < ROWS - 1; trip++)
     {
 
@@ -450,10 +450,11 @@ static int checkBoard(Board board, MetaBoard meta, int player, int row, int colu
             board[startx][starty] == board[startx + deltax + deltax][starty + deltay + deltay])
         {	printf("progress");
             fillSubBoard(board, row, column, (player == 1) ? 'R' : 'B');
-            draw_result(Board_Position[(column/3)*3+(row/3)][0],Board_Position[(column/3)*3+(row/3)][1],player);// draw the result
+            draw_result(Board_Position[(row/3)*3+(column/3)][0],Board_Position[(row/3)*3+(column/3)][1],player);// draw the result
             meta[getRowBound(row)][getColumnBound(column)] = (player == 1) ? 'R' : 'B';
             status = 1;
         }
+ 
     }
 
 
@@ -742,4 +743,3 @@ int main(int argc, char *argv[])
   print();  
   return 0;
 }
-
