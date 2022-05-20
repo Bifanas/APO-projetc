@@ -67,6 +67,22 @@ unsigned char *print(){
 	return parlcd_reg_base;
 }
 
+int draw_timer(){///////// unused
+	volatile void *spiled_reg_base = map_phys_address(SPILED_REG_BASE_PHYS, SPILED_REG_SIZE, 0);
+	volatile uint32_t time = 0x00000001;
+	*(volatile uint32_t*)(spiled_reg_base + SPILED_REG_LED_LINE_o) = 0x00000000;
+	for(int i=0; i < 32;i++){ 	
+		*(volatile uint32_t*)(spiled_reg_base + SPILED_REG_LED_LINE_o) = time;
+		sleep(1);
+		time = time * 2 + 1;
+		if(i > 23){
+		*(volatile uint32_t*)(spiled_reg_base + SPILED_REG_LED_LINE_o) = 0x00000000;
+		sleep(1);
+		}
+	}	
+	return 1; 	
+}
+
 int get_knobs_bound(int kn){
 	if(( 0 <= kn && kn < 9) || (81 <= kn && kn < 90) || (163 <= kn && kn < 172))
 		return 0;
