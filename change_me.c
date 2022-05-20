@@ -148,6 +148,27 @@ int pchar(font_descriptor_t *font, char c, unsigned x, unsigned y){
   return ch_w;      
  }
 
+int draw_proportional(font_descriptor_t *font, char c, unsigned x, unsigned y, int proportion){
+  int ch_w = font->maxwidth;
+  if(c < font->firstchar) return 0;
+  c-= font->firstchar;
+  if(c>=font->size) return 0;
+  if(font->width)
+	ch_w = font-> width[(int)c];
+  
+  for (unsigned w = 0; w < ch_w+1; w++)
+    for (unsigned h = 0; h < font->height; h++)
+		for(unsigned i = 0; i <= proportion; i++)
+			for(unsigned j = 0; j <= proportion; j++){
+				if (font->bits[c * font->height + h] & (1 << (16 - w)))
+				//	for(unsigned k = proportion; k >= 0 ; k--)
+					buffer[x + (w*proportion+i)][y + (h*proportion+j)].d = 0xFFFF;
+		}
+	print();
+	return ch_w * proportion; 
+ 
+}
+
 void draw_game(int h, int w){
 
 	for (unsigned i = 0; i < 90; i++) {
