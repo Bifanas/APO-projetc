@@ -162,7 +162,7 @@ int draw_proportional(font_descriptor_t *font, char c, unsigned x, unsigned y, i
 			for(unsigned j = 0; j <= proportion; j++){
 				if (font->bits[c * font->height + h] & (1 << (16 - w)))
 				//	for(unsigned k = proportion; k >= 0 ; k--)
-					buffer[x + (w*proportion+i)][y + (h*proportion+j)].d = 0xFFFF;
+					buffer[x + (w*proportion+i)][y + (h*proportion+j)].d = 0x0000;
 		}
 	print();
 	return ch_w * proportion; 
