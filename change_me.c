@@ -250,14 +250,15 @@ void draw_cursor(int w, int h, bool type){ //(position, bool player)
 void draw_title(){
 	char tictac[11] = "TIC TAC TOE";
 	char ultimate[8] = "ULTIMATE";
-	for(int i=0, j=30;i<11; i++, j+= 25){
-	  pchar(&font_winFreeSystem14x16, tictac[i] ,425,j);
+	
+	for(int i=0, j=12;i<11; i++, j+= 26){
+	  draw_proportional(&font_winFreeSystem14x16, tictac[i] ,420,j,2);
 	}
-	for(int m=0, n=30;m<8; m++, n+= 35){
-	  pchar(&font_winFreeSystem14x16, ultimate[m] ,45,n);
+	for(int m=0, n=12;m<8; m++, n+= 37){
+	  draw_proportional(&font_winFreeSystem14x16, ultimate[m] ,40,n,2);
 	}
 	print();
-};
+}
 
 void draw_turn(bool player){
 	if(player){
