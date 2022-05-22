@@ -677,6 +677,22 @@ int cursor(bool player, bool type, int x, int y){
 	return cu;	
 }
 
+int verify(Board board, MetaBoard meta, int x, int y, int player){
+	int r = get_row(x); int c = get_col(y);
+	if (board[c][r] == '-'){
+		printf("yes\n");
+		int r1 = getRowBound(r); int c1 =getColumnBound(c);
+		if (meta[c1][r1] == '-'){
+			printf("yes meta\n");
+			board[c][r] = (player == 1) ? 'R' : 'B';
+			draw_player(x, y, player);
+			return 1;}
+		else{return 0;}
+		
+		}
+	else{return 0;}
+}
+
 //MAIN.c------------------------------------------------------------------------------------------------------------------------------
 
 
