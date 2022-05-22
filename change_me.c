@@ -696,25 +696,18 @@ int verify(Board board, MetaBoard meta, int x, int y, int player){
 //MAIN.c------------------------------------------------------------------------------------------------------------------------------
 
 
-int main(int argc, char *argv[])
-{
-	//Implementing the initialization and usage for the LEDs
+int main(int argc, char *argv[]){
 	bool winner = 0;
-	 int startx = 240, starty =160,row, column;
-	 Board board;
-	 MetaBoard meta;
-	 // initialize boards and fill with '-'
+	int startx = 240, starty =160, verified = 0,row, column;
+	Board board;
+	MetaBoard meta;
+	// initialize boards and fill with '-'
 	for (int i = 0; i<ROWS; i++){
 		for (int j= 0; j<COLS; j++){
 			board[i][j] = '-';
 			if (i < 3 && j < 3){
 				meta[i][j] = '-';	
-	}	}	}						
-
-	volatile void *spiled_reg_base = map_phys_address(SPILED_REG_BASE_PHYS, SPILED_REG_SIZE, 0);{
-	*(volatile uint32_t*)(spiled_reg_base + SPILED_REG_LED_LINE_o) = 0xF0F0F0F0;
-	}
-	
+	}	}	}
 	draw_board();// initialize the board
 	int i = 0;
 	// draws the board
@@ -727,51 +720,52 @@ int main(int argc, char *argv[])
 			Board_Position[k][0] = x;
 			Board_Position[k][1] = y;
 			draw_game(y,x);
-	}	}
-	
+	}	}	
 	int player = 0; // player blue start	
 	int selected = cursor(player, 1, startx, starty);
-	int start = 1;
-	for (i = 0; !winner;i++){ // runs the game
-		 
+	
+	for (i = 0;i < ROWS*COLS || !winner;i++){ //------------------------------ Runs the game		
+		draw_step(i, &font_rom8x16);		 
 		if(i%2==0) player = 0; // Detects who's turn
-		else player = 1; 		    // 1 to red and 0 to blue	 
-		int next = get_knobs_bound(selected);
-		 
+		else player = 1;       // 1 to red and 0 to blue
+		Position point;
+		int next;
+		next = get_knobs_bound(selected);
 		do{
-				selected = cursor(player,0,Board_Position[next][0],Board_Position[next][1]);
-				Position point = get_meta_position(get_knobs_bound(selected), Board_Position[next][0],Board_Position[next][1]);
-				row = get_row(point.x);
-				column = get_col(point.y);
-			 
-				//verify if the selected position is empty
-				if (board[column][row]=='-'){
-						draw_player(point.x, point.y, player);
-						board[column][row] = (player == 1) ? 'R' : 'B';
-					break;}
-				
-			
-			}while(1);			 
-		printBoard(board);			 
+			selected= cursor(player,0,Board_Position[next][0],Board_Position[next][1]);
+			point = get_meta_position(get_knobs_bound(selected), Board_Position[next][0],Board_Position[next][1]);
+			verified = verify(board,meta, point.x, point.y, player);// verify if the choosen position is legal
+			if (verified == 1)break;
+		}while(1); 
+						
+		row = point.x;
+		column = point.y;
+		row = get_row(row); column = get_col(column);
 		int check = checkBoard(board, meta, player, column, row);
-			if(check == 1){
-				//next move can be anywhere
-				selected = cursor(!player, 1, Board_Position[next][0],Board_Position[next][1]);printf("%d", selected);
-			}else if(check == 2){
-				winner = player;
-				draw_winner(player);
-			}else{
-				if(start == 0){
-					sleep(1/2);
-					selected = cursor(!player,0,Board_Position[next][0],Board_Position[next][1]);
-					start += 1;
-					sleep(1);
-				}
-				printf(" selected 2 %d \n", selected);				
-				Position point = get_meta_position(get_knobs_bound(selected), Board_Position[next][0],Board_Position[next][1]);				
-				printf("position selected %d, %d \n", point.x, point.y);
+		printBoard(board);
+		if(check == 1){
+			//next move can be anywhere
+			int big_check = get_knobs_bound(selected);
+			if (meta[big_check/3][big_check%3] != '-'){
+				selected = cursor(!player, 1, Board_Position[get_knobs_bound(selected)][0],Board_Position[get_knobs_bound(selected)][1]);
+			}
+			else{continue;}
+		}else if(check == 2){
+			winner = player;
+			break;
+		}else{
+			int big_check = get_knobs_bound(selected);
+			if (meta[big_check/3][big_check%3] != '-'){
+				selected = cursor(!player, 1, Board_Position[get_knobs_bound(selected)][0],Board_Position[get_knobs_bound(selected)][1]);
 			}
 		}
-  print();  
+	}
+	if (winner){
+		draw_winner(player);
+	}else{
+		draw_tie();
+		draw_timer();		
+	} 
   return 0;
 }
+	
