@@ -178,6 +178,22 @@ int draw_proportional(font_descriptor_t *font, char c, unsigned x, unsigned y, i
  
 }
 
+void draw_step(int turn,font_descriptor_t *font){
+	volatile void *spiled_reg_base = map_phys_address(SPILED_REG_BASE_PHYS, SPILED_REG_SIZE, 0);
+	volatile uint32_t current_turn = 0x00000000;
+	*(volatile uint32_t*)(spiled_reg_base + SPILED_REG_LED_LINE_o) = current_turn + turn;	
+	for (int x = 0; x <= 90; x++){
+		for(int y = 10; y <= 60; y++){			
+			buffer[x][y].d = 0xFFFF;
+		}
+	}	
+	char unit[10] = "0123456789";
+	draw_proportional(font, unit[(turn/10)] ,30,15,2);
+	draw_proportional(font, unit[(turn%10)] ,55,15,2);
+	print();
+	 
+}
+
 void draw_game(int h, int w){
 	for (unsigned i = 0; i < 90; i++) {
 		for(unsigned j=0; j<3;j++){	
