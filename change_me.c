@@ -321,6 +321,19 @@ void draw_turn(bool player){
 	draw_title();
 }
 
+void draw_tie(){
+	for (unsigned x = 0; x < LCD_WIDTH; x++){
+		for (unsigned y = 0; y < LCD_HEIGH; y++){
+			buffer[x][y].d = 0xffff;
+		}  
+	}
+	char text[4] = "Tie!";
+	int x=0;
+	for(int i=0, j=30 ;i<4; i++, j+= x){
+		x = draw_proportional(&font_winFreeSystem14x16, text[i],140+j,120,5);
+	}
+}
+
 void draw_winner(bool player){
 	  
 	if(player){
