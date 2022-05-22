@@ -407,14 +407,13 @@ void refresh(){
 extern font_descriptor_t font_rom8x16;
 extern font_descriptor_t font_winFreeSystem14x16;
 
+int Board_Position[9][2];
 typedef char Board[ROWS][COLS];
 typedef char MetaBoard[ROWS / 3][COLS / 3];
 typedef struct{
 	int x;
 	int y;
 	}Position;
-
-int Board_Position[9][2];
 	
 void fillSubBoard(Board board, int x, int y, char c)
 {
@@ -428,17 +427,20 @@ void fillSubBoard(Board board, int x, int y, char c)
         }
     }
 }
+
 int getRowBound(int row)
-{    
+{
+    switch (row)
     {
-        if (row <=2)
+        case 0 ... 2:
             return 0;
-        if (row <=5)
+        case 3 ... 5:
             return 1;
-        if (row <=8)
-            return 2; 
+        case 6 ... 8:
+            return 2;
+        default:
+            return -1;
     }
-    return -1;
 }
 
 int getColumnBound(int column)
@@ -455,12 +457,13 @@ int getColumnBound(int column)
             return -1;
     }
 }
+
 static int checkMeta(MetaBoard meta)
 {
     const int xStart[ROWS - 1] = {0,  0,  0,  0,  1,  2,  0,  0};
     const int yStart[COLS - 1] = {0,  1,  2,  0,  0,  0,  0,  2};
     const int xDelta[ROWS - 1] = {1,  1,  1,  0,  0,  0,  1,  1};
-    const int yDelta[COLS - 1] = {0,  0,  0,  1,  1,  1,  1,  1};
+    const int yDelta[COLS - 1] = {0,  0,  0,  1,  1,  1,  1,  -1};
     static int startx, starty, deltax, deltay;
     for (int trip = 0; trip < ROWS - 1; trip++)
     {
@@ -477,9 +480,9 @@ static int checkMeta(MetaBoard meta)
 }
 static int checkBoard(Board board, MetaBoard meta, int player, int row, int column)
 {
-    const int xStart[ROWS - 1] = {0,  0,  0,  0,  1,  2,  0,  0};
-    const int yStart[COLS - 1] = {0,  1,  2,  0,  0,  0,  0,  2};
-    const int xDelta[ROWS - 1] = {1,  1,  1,  0,  0,  0,  1,  1};
+    const int xStart[ROWS - 1] = {0,  0,  0,  0,  1,  2,  0,  2};
+    const int yStart[COLS - 1] = {0,  1,  2,  0,  0,  0,  0,  0};
+    const int xDelta[ROWS - 1] = {1,  1,  1,  0,  0,  0,  1,  -1};
     const int yDelta[COLS - 1] = {0,  0,  0,  1,  1,  1,  1,  1};
     int startx, starty, deltax, deltay, status = 0;
     row = row/3*3;
@@ -519,7 +522,6 @@ void printBoard(Board board)
         else printf("\n-----|---|---||---|---|---||---|---|-----\n");
     }
 }
-
 Position get_meta_position(int knob_bound, int x, int y){
 	Position position;
 		if (knob_bound == 0){
@@ -559,7 +561,7 @@ Position get_meta_position(int knob_bound, int x, int y){
 			position.y = y+30;
 			}		
 	return position;
-	}
+}
 
 int cursor(bool player, bool type, int x, int y){ // player; position; type
 	uint32_t rgb_knobs_value;
