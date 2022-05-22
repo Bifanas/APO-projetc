@@ -563,7 +563,7 @@ Position get_meta_position(int knob_bound, int x, int y){
 	return position;
 }
 
-int cursor(bool player, bool type, int x, int y){ // player; position; type
+int cursor(bool player, bool type, int x, int y){ 
 	uint32_t rgb_knobs_value;
 	unsigned char *spiled_reg_base = map_phys_address(SPILED_REG_BASE_PHYS, SPILED_REG_SIZE, 0);	
 	int rk=0, bk=0, rb, bb,cu,cb;
@@ -576,10 +576,11 @@ int cursor(bool player, bool type, int x, int y){ // player; position; type
 		bb = (rgb_knobs_value>>24) & 1;		
 		if(player) cu = rk,cb= rb; 
 			else cu = bk, cb = bb;
-		if(cb != 0)break;		
+		if (cb != 0)break;
 		int option = get_knobs_bound(cu);
 		Position meta;		
-		refresh();		
+		refresh();
+		
 		if(option == 0){ // position 1
 			if (type){
 				x = 141;
@@ -670,12 +671,11 @@ int cursor(bool player, bool type, int x, int y){ // player; position; type
 				draw_cursor( meta.x, meta.y, type);//position 1 small game
 			}			
 		}
-		sleep(1);		
+		sleep(1);
 	}while(1);
 	sleep(1);
 	return cu;	
 }
-
 
 //MAIN.c------------------------------------------------------------------------------------------------------------------------------
 
