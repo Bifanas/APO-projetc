@@ -4,13 +4,12 @@
 
   change_me.c      - main file
 
-  include your name there and license for distribution.
-
-  Remove next text: This line should not appear in submitted
-  work and project name should be change to match real application.
-  If this text is there I want 10 points subtracted from final
-  evaluation.
-
+  Ultimate tic-tac-toe
+  Semestral project - Computer architecture CVUT
+  Fabian Pascual
+  Oluwaseun Olasoji
+  22/05/2022
+	
  ***/
 
 #define _POSIX_C_SOURCE 200112L
