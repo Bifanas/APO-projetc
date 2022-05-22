@@ -23,21 +23,15 @@
 #include <string.h>
 #include <stdbool.h>
 #include <time.h>
-
 #include "mzapo_parlcd.h"
 #include "mzapo_phys.h"
 #include "mzapo_regs.h"
 #include "font_types.h"
 
-
-
-
 //INTERFACE.H------------------------------------------------------------------------------------------------------------------------------
 
 #define LCD_WIDTH 480
 #define LCD_HEIGH 320
-
-
 
 union led {
         struct {
@@ -66,7 +60,7 @@ unsigned char *print(){
 	return parlcd_reg_base;
 }
 
-int draw_timer(){///////// unused
+int draw_timer(){
 	volatile void *spiled_reg_base = map_phys_address(SPILED_REG_BASE_PHYS, SPILED_REG_SIZE, 0);
 	volatile uint32_t time = 0x00000001;
 	*(volatile uint32_t*)(spiled_reg_base + SPILED_REG_LED_LINE_o) = 0x00000000;
@@ -154,8 +148,8 @@ int pchar(font_descriptor_t *font, char c, unsigned x, unsigned y){
   c-= font->firstchar;
   if(c>=font->size) return 0;
   if(font->width)
-	ch_w = font-> width[(int)c];
-  
+  	ch_w = font-> width[(int)c];
+	
   for (unsigned w = 0; w < ch_w; w++)
     for (unsigned h = 0; h < font->height; h++)
       if (font->bits[c * font->height + h] & (1 << (16 - w)))
@@ -285,8 +279,7 @@ void draw_turn(bool player){
 			for (unsigned y = 10; y < 310; y++){
 					buffer[x][y].d = 0xffff;
 				}
-			}
-		
+			}		
 		for (unsigned x = 10; x < 90 ; x++){   //paint it red
 			for (unsigned y = 10; y < 310; y++){
 				buffer[x][y].d = 0xf000;
@@ -352,23 +345,23 @@ void draw_winner(bool player){
 }
 
 void refresh(){ 	
-		for(int x = 140; x<=340; x += 100){
-			for(int y = 60;  y<=260;y += 100){			
-				for (unsigned i = 0; i < 103; i++){
-					for(unsigned j=0; j<6;j++){	
-						buffer[x -52 +j][y + 51-i].d = 0xffff;//left
-						buffer[x +47 +j][y + 51-i].d = 0xffff;//rigth
-						buffer[x -51 +i][y + 48+j].d = 0xffff;;//bottom
-						buffer[x -51 +i][y - 52+j].d = 0xffff;;//top
-							for(int w = x-30; w<=x+30; w += 30){//0 small game
-								for(int h = y-30;  h<=y+30;h += 30){	
-								  for (unsigned i = 0; i < 22; i++){
-									  for(unsigned j=0; j<2;j++){	
-										buffer[w -10 +j][h + 11-i].d = 0xffff;//left
-										buffer[w +11 +j][h + 11-i].d = 0xffff;//rigth
-										buffer[w -10 +i][h + 11+j].d = 0xffff;//bottom
-										buffer[w -10 +i][h - 10+j].d = 0xffff;//top
-			}	}	}	}	}	}	}	}					
+	for(int x = 140; x<=340; x += 100){
+		for(int y = 60;  y<=260;y += 100){			
+			for (unsigned i = 0; i < 103; i++){
+				for(unsigned j=0; j<6;j++){	
+					buffer[x -52 +j][y + 51-i].d = 0xffff;//left
+					buffer[x +47 +j][y + 51-i].d = 0xffff;//rigth
+					buffer[x -51 +i][y + 48+j].d = 0xffff;;//bottom
+					buffer[x -51 +i][y - 52+j].d = 0xffff;;//top
+						for(int w = x-30; w<=x+30; w += 30){//0 small game
+							for(int h = y-30;  h<=y+30;h += 30){	
+							  for (unsigned i = 0; i < 22; i++){
+								  for(unsigned j=0; j<2;j++){	
+									buffer[w -10 +j][h + 11-i].d = 0xffff;//left
+									buffer[w +11 +j][h + 11-i].d = 0xffff;//rigth
+									buffer[w -10 +i][h + 11+j].d = 0xffff;//bottom
+									buffer[w -10 +i][h - 10+j].d = 0xffff;//top
+	}	}	}	}	}	}	}	}					
 	print();
 }
 
@@ -378,7 +371,7 @@ void refresh(){
 #define ROWS 9
 #define COLS 9
 
-//extern font_descriptor_t font_rom8x16;
+extern font_descriptor_t font_rom8x16;
 extern font_descriptor_t font_winFreeSystem14x16;
 
 typedef char Board[ROWS][COLS];
@@ -403,16 +396,14 @@ void fillSubBoard(Board board, int x, int y, char c)
     }
 }
 int getRowBound(int row)
-{
-    
+{    
     {
         if (row <=2)
             return 0;
         if (row <=5)
             return 1;
         if (row <=8)
-            return 2;
- 
+            return 2; 
     }
     return -1;
 }
@@ -462,7 +453,6 @@ static int checkBoard(Board board, MetaBoard meta, int player, int row, int colu
     column = column/3*3;
     for (int trip = 0; trip < ROWS - 1; trip++)
     {
-
         startx = row + xStart[trip];
         starty = column + yStart[trip];
         deltax = xDelta[trip];
@@ -475,11 +465,8 @@ static int checkBoard(Board board, MetaBoard meta, int player, int row, int colu
             draw_result(Board_Position[(row/3)*3+(column/3)][0],Board_Position[(row/3)*3+(column/3)][1],player);// draw the result
             meta[getRowBound(row)][getColumnBound(column)] = (player == 1) ? 'R' : 'B';
             status = 1;
-        }
- 
+        } 
     }
-
-
     return (status + checkMeta(meta)); // always check if the game has a winner
 }
 
@@ -543,31 +530,21 @@ Position get_meta_position(int knob_bound, int x, int y){
 
 int cursor(bool player, bool type, int x, int y){ // player; position; type
 	uint32_t rgb_knobs_value;
-	unsigned char *spiled_reg_base = map_phys_address(SPILED_REG_BASE_PHYS, SPILED_REG_SIZE, 0);
-	
+	unsigned char *spiled_reg_base = map_phys_address(SPILED_REG_BASE_PHYS, SPILED_REG_SIZE, 0);	
 	int rk=0, bk=0, rb, bb,cu,cb;
-
 	draw_turn(player);
-
-	do{
-		
+	do{		
 		rgb_knobs_value = *(volatile uint32_t*)(spiled_reg_base + SPILED_REG_KNOBS_8BIT_o);
 		rk = (rgb_knobs_value>>16) & 0xFF;
 		rb = (rgb_knobs_value>>26) & 1;
 		bk = (rgb_knobs_value>>0) & 0xFF;
-		bb = (rgb_knobs_value>>24) & 1;
-		
+		bb = (rgb_knobs_value>>24) & 1;		
 		if(player) cu = rk,cb= rb; 
 			else cu = bk, cb = bb;
-		if(cb != 0)break;
-		
+		if(cb != 0)break;		
 		int option = get_knobs_bound(cu);
-		Position meta;
-		
-		
-		//sleep(1);
-		refresh();
-		
+		Position meta;		
+		refresh();		
 		if(option == 0){ // position 1
 			if (type){
 				x = 141;
@@ -658,12 +635,10 @@ int cursor(bool player, bool type, int x, int y){ // player; position; type
 				draw_cursor( meta.x, meta.y, type);//position 1 small game
 			}			
 		}
-		sleep(1);
-		//printf("position- %d red - %d, blue %d - cu %d \n", option,rb,bb,cu);
+		sleep(1);		
 	}while(1);
 	sleep(1);
-	return cu;
-	
+	return cu;	
 }
 
 
@@ -672,8 +647,6 @@ int cursor(bool player, bool type, int x, int y){ // player; position; type
 
 int main(int argc, char *argv[])
 {
-	// draw_winner(1);
-	
 	//Implementing the initialization and usage for the LEDs
 	bool winner = 0;
 	 int startx = 240, starty =160,row, column;
@@ -684,14 +657,12 @@ int main(int argc, char *argv[])
 		for (int j= 0; j<COLS; j++){
 			board[i][j] = '-';
 			if (i < 3 && j < 3){
-				meta[i][j] = '-';	}
-			}
-		}
-						
+				meta[i][j] = '-';	
+	}	}	}						
 
 	volatile void *spiled_reg_base = map_phys_address(SPILED_REG_BASE_PHYS, SPILED_REG_SIZE, 0);{
-		*(volatile uint32_t*)(spiled_reg_base + SPILED_REG_LED_LINE_o) = 0xF0F0F0F0;
-    }
+	*(volatile uint32_t*)(spiled_reg_base + SPILED_REG_LED_LINE_o) = 0xF0F0F0F0;
+	}
 	
 	draw_board();// initialize the board
 	int i = 0;
@@ -705,26 +676,19 @@ int main(int argc, char *argv[])
 			Board_Position[k][0] = x;
 			Board_Position[k][1] = y;
 			draw_game(y,x);
-	}}
+	}	}
 	
-	int player = 0; // player blue start
-	
+	int player = 0; // player blue start	
 	int selected = cursor(player, 1, startx, starty);
 	int start = 1;
-	//printf("%d \n", selected);
 	for (i = 0; !winner;i++){ // runs the game
 		 
 		if(i%2==0) player = 0; // Detects who's turn
 		else player = 1; 		    // 1 to red and 0 to blue	 
-		//printf(" player %d (1 to red and 0 to blue)\n", player);
-		 
-		 
 		int next = get_knobs_bound(selected);
 		 
 		do{
 				selected = cursor(player,0,Board_Position[next][0],Board_Position[next][1]);
-				//printf(" selected 1 %d \n", selected);
-			 
 				Position point = get_meta_position(get_knobs_bound(selected), Board_Position[next][0],Board_Position[next][1]);
 				row = get_row(point.x);
 				column = get_col(point.y);
@@ -736,19 +700,14 @@ int main(int argc, char *argv[])
 					break;}
 				
 			
-			}while(1);
-			 
-		printBoard(board);
-			 
+			}while(1);			 
+		printBoard(board);			 
 		int check = checkBoard(board, meta, player, column, row);
-			printf("check = %d" , check);
 			if(check == 1){
 				//next move can be anywhere
-				printf("Next Big Board");
 				selected = cursor(!player, 1, Board_Position[next][0],Board_Position[next][1]);printf("%d", selected);
 			}else if(check == 2){
 				winner = player;
-				printf("%d \n", winner);
 				draw_winner(player);
 			}else{
 				if(start == 0){
@@ -757,18 +716,11 @@ int main(int argc, char *argv[])
 					start += 1;
 					sleep(1);
 				}
-				printf(" selected 2 %d \n", selected);
-				
-				Position point = get_meta_position(get_knobs_bound(selected), Board_Position[next][0],Board_Position[next][1]);
-				
+				printf(" selected 2 %d \n", selected);				
+				Position point = get_meta_position(get_knobs_bound(selected), Board_Position[next][0],Board_Position[next][1]);				
 				printf("position selected %d, %d \n", point.x, point.y);
-				
-				//point = get_meta_position(get_knobs_bound(selected), Board_Position[get_knobs_bound(selected)][0], Board_Position[get_knobs_bound(selected)][1]);
-				
 			}
 		}
-		
-
   print();  
   return 0;
 }
