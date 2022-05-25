@@ -57,7 +57,6 @@ union pixel {
 union pixel buffer[LCD_WIDTH][LCD_HEIGH];
 
 unsigned char *print(){
-	parlcd_reg_base = map_phys_address(PARLCD_REG_BASE_PHYS, PARLCD_REG_SIZE, 0);
 		parlcd_write_cmd(parlcd_reg_base, 0x2c); // reset location to the top left corner
 		for (unsigned y = 0; y < LCD_HEIGH; y++)
 			for (unsigned x = 0; x < LCD_WIDTH; x++)
@@ -67,8 +66,10 @@ unsigned char *print(){
 
 void util_init(){
 	spiled_reg_base = map_phys_address(SPILED_REG_BASE_PHYS, SPILED_REG_SIZE, 0);
+	
 	if (spiled_reg_base == NULL) exit(1);
-
+	parlcd_reg_base = map_phys_address(PARLCD_REG_BASE_PHYS, PARLCD_REG_SIZE, 0);
+	if (parlcd_reg_base == NULL) exit(1);
 	}
 int draw_timer(){
 	
@@ -180,7 +181,6 @@ int draw_proportional(font_descriptor_t *font, char c, unsigned x, unsigned y, i
 		for(unsigned i = 0; i <= proportion; i++)
 			for(unsigned j = 0; j <= proportion; j++){
 				if (font->bits[c * font->height + h] & (1 << (16 - w)))
-				//	for(unsigned k = proportion; k >= 0 ; k--)
 					buffer[x + (w*proportion+i)][y + (h*proportion+j)].d = 0x0000;
 		}
 	return ch_w * proportion; 
@@ -188,7 +188,6 @@ int draw_proportional(font_descriptor_t *font, char c, unsigned x, unsigned y, i
 }
 
 void draw_step(int turn,font_descriptor_t *font){
-	//volatile void *spiled_reg_base = map_phys_address(SPILED_REG_BASE_PHYS, SPILED_REG_SIZE, 0);
 	volatile uint32_t current_turn = 0x00000000;
 	*(volatile uint32_t*)(spiled_reg_base + SPILED_REG_LED_LINE_o) = current_turn + turn;	
 	for (int x = 0; x <= 90; x++){
@@ -295,7 +294,6 @@ void draw_title(){
 
 void draw_turn(bool player){
 	if(player){
-		//volatile void *spiled_reg_base = map_phys_address(SPILED_REG_BASE_PHYS, SPILED_REG_SIZE, 0);{
 			*(volatile uint32_t*)(spiled_reg_base + SPILED_REG_LED_RGB1_o) = 0xFFFF0000;
 			*(volatile uint32_t*)(spiled_reg_base + SPILED_REG_LED_RGB2_o) = 0xFFFF0000;
 		
@@ -311,7 +309,6 @@ void draw_turn(bool player){
 		}
 	}
 	else{
-		//volatile void *spiled_reg_base = map_phys_address(SPILED_REG_BASE_PHYS, SPILED_REG_SIZE, 0);{
 			*(volatile uint32_t*)(spiled_reg_base + SPILED_REG_LED_RGB1_o) = 0x0000FFFF;
 			*(volatile uint32_t*)(spiled_reg_base + SPILED_REG_LED_RGB2_o) = 0x0000FFFF;
 		
@@ -349,7 +346,6 @@ void draw_winner(bool player){
 		}  
 	}
 	if(player){
-		//volatile void *spiled_reg_base = map_phys_address(SPILED_REG_BASE_PHYS, SPILED_REG_SIZE, 0);{
 			*(volatile uint32_t*)(spiled_reg_base + SPILED_REG_LED_RGB1_o) = 0xFFFF0000;
 			*(volatile uint32_t*)(spiled_reg_base + SPILED_REG_LED_RGB2_o) = 0xFFFF0000;
 						
@@ -359,7 +355,6 @@ void draw_winner(bool player){
 			}
 		}
 	}else{
-		//volatile void *spiled_reg_base = map_phys_address(SPILED_REG_BASE_PHYS, SPILED_REG_SIZE, 0);{
 			*(volatile uint32_t*)(spiled_reg_base + SPILED_REG_LED_RGB1_o) = 0x0000FFFF;
 			*(volatile uint32_t*)(spiled_reg_base + SPILED_REG_LED_RGB2_o) = 0x0000FFFF;
 							
@@ -376,14 +371,13 @@ void draw_winner(bool player){
 		x = draw_proportional(&font_winFreeSystem14x16, text[i],80+j,120,5);
 	}print();
 	for(int i=0; i<=10; i++){
-		volatile void *spiled_reg_base = map_phys_address(SPILED_REG_BASE_PHYS, SPILED_REG_SIZE, 0);{
 			*(volatile uint32_t*)(spiled_reg_base + SPILED_REG_LED_LINE_o) = 0xFFFFFFFF;
 			sleep(1);
 			*(volatile uint32_t*)(spiled_reg_base + SPILED_REG_LED_LINE_o) = 0x00000000;
 			sleep(1);		
 		}
-	}
-	//draw_board();
+	
+
 }
 
 void refresh(){ 	
@@ -680,9 +674,9 @@ int cursor(bool player, bool type, int x, int y){
 				draw_cursor( meta.x, meta.y, type);//position 1 small game
 			}			
 		}
-		sleep(1);
+		
 	}while(1);
-	sleep(1);
+	
 	return cu;	
 }
 
@@ -771,7 +765,7 @@ int main(int argc, char *argv[]){
 		}
 	}
 	if (winner){
-		draw_winner(player);
+		draw_winner(winner);
 	}else{
 		draw_tie();
 		draw_timer();		
