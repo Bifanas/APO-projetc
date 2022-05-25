@@ -279,7 +279,7 @@ void draw_title(){
 	for(int i=0, j=12;i<11; i++, j+= 26){
 	  draw_proportional(&font_winFreeSystem14x16, tictac[i] ,420,j,2);
 	}
-	for(int m=0, n=12;m<8; m++, n+= 37){
+	for(int m=0, n=62;m<8; m++, n+= 30){
 	  draw_proportional(&font_winFreeSystem14x16, ultimate[m] ,40,n,2);
 	}
 	print();
@@ -297,7 +297,7 @@ void draw_turn(bool player){
 				}
 			}		
 		for (unsigned x = 10; x < 90 ; x++){   //paint it red
-			for (unsigned y = 10; y < 310; y++){
+			for (unsigned y = 60; y < 310; y++){
 				buffer[x][y].d = 0xf000;
 			}
 		}
@@ -307,7 +307,7 @@ void draw_turn(bool player){
 			*(volatile uint32_t*)(spiled_reg_base + SPILED_REG_LED_RGB2_o) = 0x0000FFFF;
 		}
 		for (unsigned x = 10; x < 90 ; x++){ // refresh the oposite side
-			for (unsigned y = 10; y < 310; y++){
+			for (unsigned y = 60; y < 310; y++){
 				buffer[x][y].d = 0xffff;
 			}
 		}					
