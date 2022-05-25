@@ -682,7 +682,7 @@ int cursor(bool player, bool type, int x, int y){
 		}
 		sleep(1);
 	}while(1);
-	//sleep(1);
+	sleep(1);
 	return cu;	
 }
 
